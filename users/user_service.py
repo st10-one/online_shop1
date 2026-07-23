@@ -42,4 +42,14 @@ class UserService:
         response.delete_cookie('access_token')
 
         return True
-            
+
+    def delete_user(user_id:int):
+        deleted_user = UserDTO.delete_user_by_id(user_id=user_id)
+
+        if not deleted_user:
+            raise HTTPException(
+                status_code=404,
+                detail="користувача неіснує"
+            )
+
+        return {"id": deleted_user}

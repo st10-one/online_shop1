@@ -25,6 +25,3 @@ def create_user(resp:Response, registration_data:BaseUser = Body(embed=True)):
         usr=registration_data,
         response=resp
     )
-router.post("/protect_router", dependencies=[Depends(get_token_by_cookies)])
-def i():
-    return {"Secret": "abc"}
