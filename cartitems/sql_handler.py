@@ -2,6 +2,7 @@ from db import session
 from sqlalchemy import select, update
 from .model import CartItemsOrm
 from products.model import CreateProductOrm
+from .schema import CartItem
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -72,4 +73,21 @@ class CartItemsDTO:
                 return res_id.id
             
         except SQLAlchemyError as e:
+            raise e
+
+
+    @staticmethod 
+    def get_all_with_cartitems() -> list[CartItemsOrm] | list[None]:
+        stmt = select(CartItemsOrm)
+
+        try:
+            with session() as s:
+                all_items = s.execute(stmt).scalars().all()
+
+            if not all_items:
+                return []
+
+            return [CartItem.model_validate(my_item) for my_item in all_items]
+        except SQLAlchemyError as e:
+            print(e)
             raise e

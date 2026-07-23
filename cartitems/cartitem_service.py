@@ -34,4 +34,17 @@ class CartItemService:
 
         return adding
         
-        
+
+    @staticmethod
+    def get_all_items():
+        the_items = CartItemsDTO.get_all_with_cartitems()
+
+        print(the_items)
+
+        if not the_items:
+            raise HTTPException(
+                status_code=404,
+                detail="Кошик пустий"
+            )
+
+        return the_items

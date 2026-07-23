@@ -12,3 +12,7 @@ def adding_to_basket(product_id:int, request:Request):
         product_id=product_id,
         request=request
     )
+
+@b_router.get("")
+def get_all_items():
+    return CartItemService.get_all_items()
