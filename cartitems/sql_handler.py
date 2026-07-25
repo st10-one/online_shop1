@@ -1,5 +1,5 @@
 from db import session
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from .model import CartItemsOrm
 from products.model import CreateProductOrm
 from .schema import CartItem
@@ -91,3 +91,25 @@ class CartItemsDTO:
         except SQLAlchemyError as e:
             print(e)
             raise e
+
+
+    @staticmethod
+    def delete_from_cart_by_id(prod_id:int):
+        stmt = delete(CartItemsOrm).where(CartItemsOrm.product_id == prod_id).returning(CartItemsOrm.product_id)
+
+        try:
+            with session() as s:
+                result = s.execute(stmt).scalar_one_or_none()
+                s.commit()    
+
+            if not result:
+                return None
+
+            return result
+                
+        except SQLAlchemyError, ValueError:
+            s.rollback()
+
+            return {
+                "message": "happen error"
+            }

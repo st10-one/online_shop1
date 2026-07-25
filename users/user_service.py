@@ -43,6 +43,7 @@ class UserService:
 
         return True
 
+
     def delete_user(user_id:int):
         deleted_user = UserDTO.delete_user_by_id(user_id=user_id)
 

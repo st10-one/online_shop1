@@ -48,3 +48,20 @@ class CartItemService:
             )
 
         return the_items
+
+
+    @staticmethod
+    def delete_product_from_cartitem(product_id:int):
+        id_deleted_of_product = CartItemsDTO.delete_from_cart_by_id(prod_id=product_id)
+
+        if not id_deleted_of_product:
+            raise HTTPException(
+                status_code=404,
+                detail= f"Товару з id {product_id} в кошику нема"
+            )
+
+        return {
+            "id": id_deleted_of_product,
+            "status": "success",
+            "code": 204
+        }
