@@ -3,7 +3,7 @@ from db import session
 from .model import CreateProductOrm
 from .schemas import CreateProduct
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 
 class ProductRepo:
@@ -60,4 +60,29 @@ class ProductRepo:
         except SQLAlchemyError as e:
             print(e)
             return None
-        
+
+
+    def update_product_data_by_id(prod_id:int, data:CreateProduct):
+        stmt = update(CreateProductOrm).where(CreateProductOrm.id == prod_id).values(
+            name = data.name,
+            description = data.description,
+            quantity = data.quantity,
+            price = data.price,
+            image_url = data.image_url
+        ).returning(CreateProductOrm.id)
+
+        try:
+            with session() as s:
+                result = s.execute(stmt).scalar_one_or_none()
+                s.commit()
+
+            if not result:
+                return None
+
+            return result
+        except SQLAlchemyError as e:
+            s.rollback()
+
+            print(e)
+
+            

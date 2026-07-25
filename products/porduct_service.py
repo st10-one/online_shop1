@@ -52,3 +52,20 @@ class ProductService:
         
         return ShowProduct.model_validate(db_product)
     
+
+    @staticmethod
+    def update_product(product_id:int, new_data:CreateProduct):
+        id_product_edited = ProductRepo.update_product_data_by_id(
+            prod_id=product_id,
+            data=new_data
+        ) 
+
+        if not id_product_edited:
+            raise HTTPException(
+                status_code=400,
+                detail="happen the error"
+            )
+
+        return {
+            "edited_id": id_product_edited
+        }
