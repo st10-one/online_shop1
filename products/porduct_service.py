@@ -69,3 +69,19 @@ class ProductService:
         return {
             "edited_id": id_product_edited
         }
+
+    @staticmethod
+    def delete_product(prod_id:int):
+        id_product_deleted = ProductRepo.delete_product_by_id(
+            prod_id=prod_id,
+        ) 
+
+        if not id_product_deleted:
+            raise HTTPException(
+                status_code=400,
+                detail="happen the error"
+            )
+
+        return {
+            "edited_id": id_product_deleted
+        }

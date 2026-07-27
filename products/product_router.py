@@ -17,13 +17,19 @@ def get_all_products(tab:ReturnProductTabulation = Depends()):
     return ProductService.get_all_the_products(tabul=tab)
 
 @product_router.get("/{product_id}")
-def get_one_product(product_id:int):
+def get_one_products(product_id:int):
     return ProductService.get_one_product_by_id(prod_id=product_id)
 
 
 @product_router.put("/{product_id}")
-def update_product_data(product_id:int, new_data:CreateProduct):
+def update_products_data(product_id:int, new_data:CreateProduct):
     return ProductService.update_product(
         product_id=product_id,
         new_data=new_data
+    )
+
+@product_router.delete("/{product_id}")
+def delete_products(prod_id:int):
+    return ProductService.delete_product(
+        prod_id=prod_id
     )

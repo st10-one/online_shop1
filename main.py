@@ -4,6 +4,7 @@ import uvicorn
 from auth.router import router
 from users.users_router import user_router
 from products.product_router import product_router
+from orders.orders_router import orders_router
 from cartitems.basket_router import b_router
 
 
@@ -13,7 +14,8 @@ app = FastAPI()
 app.include_router(router=router)
 app.include_router(router=product_router)
 app.include_router(router=user_router)
-app.include_router(router=b_router)
+app.include_router(router=b_router),
+app.include_router(router=orders_router)
 
 
 @app.get("/")

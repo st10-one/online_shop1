@@ -3,7 +3,7 @@ from db import session
 from .model import CreateProductOrm
 from .schemas import CreateProduct
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 
 
 class ProductRepo:
@@ -85,4 +85,19 @@ class ProductRepo:
 
             print(e)
 
-            
+
+    @staticmethod  
+    def delete_product_by_id(prod_id:int):
+        sql_query = delete(CreateProductOrm).where(CreateProductOrm.id == prod_id).returning(CreateProductOrm.id)
+
+        try:
+            with session() as s:
+                result = s.execute(sql_query).scalar_one_or_none()
+                s.commit()
+
+                if not result:
+                    return None
+
+                return result
+        except SQLAlchemyError, ValueError:
+            s.rollback()
