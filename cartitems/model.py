@@ -8,8 +8,8 @@ class CartItemsOrm(Base):
 
     id:Mapped[int] = mapped_column(primary_key=True)
     user_id:Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
-    product_id:Mapped[int] = mapped_column(ForeignKey("products.id"))
-    quantity:Mapped[int] = mapped_column(default=1)
+    product_id:Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"))
+    quantity:Mapped[int] = mapped_column(default=0)
 
 
     user = relationship(

@@ -99,5 +99,5 @@ class ProductRepo:
                     return None
 
                 return result
-        except SQLAlchemyError, ValueError:
+        except SQLAlchemyError:
             s.rollback()

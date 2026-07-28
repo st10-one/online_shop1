@@ -107,7 +107,7 @@ class CartItemsDTO:
 
             return result
                 
-        except SQLAlchemyError, ValueError:
+        except SQLAlchemyError:
             s.rollback()
 
             return {
