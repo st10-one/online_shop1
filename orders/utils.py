@@ -10,6 +10,7 @@ def get_current_user(request:Request) -> int | None:
         "access_token"
     )
 
+
     if token is None:
         raise HTTPException(
             status_code=401,

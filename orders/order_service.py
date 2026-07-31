@@ -26,3 +26,26 @@ class OrderService:
             )
 
         return ShowOrder.model_validate(my_order)
+
+    @staticmethod
+    def cancel_order(order_id:int, request:Request):
+        my_id = get_current_user(request=request)
+
+        if not my_id:
+            raise HTTPException(
+                status_code=404
+            )
+
+
+        cancel_order = OrderDTO.cancel_order_by_id(
+            order_id=order_id,
+            user_id=my_id
+        )
+
+        if cancel_order is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Сталася помилка"
+            )
+
+        return cancel_order
