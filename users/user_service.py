@@ -4,7 +4,7 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from .utils import get_current_user
+from depends import get_current_user
 
 
 class UserService:

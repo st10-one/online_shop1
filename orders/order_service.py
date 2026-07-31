@@ -2,7 +2,7 @@ from .schemas import Orders, ShowOrder
 from fastapi import Request, HTTPException
 
 from .sql_handler import OrderDTO
-from .utils import get_current_user
+from depends import get_current_user
 
 
 class OrderService:

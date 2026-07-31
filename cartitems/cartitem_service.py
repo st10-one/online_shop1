@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from users.utils import get_current_user
+from depends import get_current_user
 from .sql_handler import CartItemsDTO
 from fastapi import Request
 

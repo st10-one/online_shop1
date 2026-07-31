@@ -1,15 +1,17 @@
-from fastapi import Request
-from fastapi import HTTPException
 
+from typing import Annotated
+
+from fastapi import HTTPException, Request, File, UploadFile
 import jwt
-from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from config import settings
+
 
 def get_current_user(request:Request) -> int | None:
     token = request.cookies.get(
         "access_token"
     )
+
 
     if token is None:
         raise HTTPException(
@@ -35,17 +37,17 @@ def get_current_user(request:Request) -> int | None:
         
         return None
     
-    except ExpiredSignatureError:
+    except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=401,
             detail="Токен згорів"
         )
     
-    except InvalidTokenError:
+    except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=401,
             detail="Токен підроблений або неправельний"
         )
 
 
-
+ProductImage = Annotated[UploadFile, File()]
