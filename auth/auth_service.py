@@ -1,7 +1,8 @@
-from fastapi import HTTPException, Response
+from fastapi import HTTPException, Request, Response
 
-from .schemas import BaseUser, ShowUser, UserRegistrations
-from .utils import create_access_token, verify_user
+from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
+from .utils import create_access_token, verify_user, create_refresh_token, decoded_refresh_token
+from depends import get_current_user
 
 
 from .sql_handler import AuthRepo
@@ -73,22 +74,76 @@ class AuthService:
             "email": users.email
             }
 
-        token = create_access_token(
+        access_token = create_access_token(
                 data=token_payload,
                 expire_time=15
             )
 
+
+        refresh_token = create_refresh_token(
+            data={
+                "user_id": users.id
+            }
+        )
+
         response.set_cookie(
                 key="access_token",
-                value=f"Bearer {token}",
+                value=f"Bearer {access_token}",
                 httponly=True,
                 samesite="lax"
             )
 
+        response.set_cookie(
+                key="refresh_token",
+                value=f"Bearer {refresh_token}",
+                httponly=True,
+                samesite="lax"
+            )
 
-        return {
-            "token": token,
-            "type": "Bearer"
-        }
+        return TokenInfo(
+            access_token=access_token,
+            token_type="Bearer"
+        )
 
 
+    @staticmethod
+    def update_access_token(request:Request, response:Response):
+        user_id = decoded_refresh_token(request=request)
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=404,
+                detail="user_id not found"
+            )
+
+        users = AuthRepo.find_user_by_id(user_id=user_id)
+
+        if users is None:
+            raise HTTPException(
+                status_code=404,
+                detail="user not found"
+            )
+
+
+        token_payload = {
+                    "id": users.id,
+                    "sub": users.username,
+                    "email": users.email
+                    }
+        
+        update_access_token = create_access_token(
+                    data=token_payload,
+                    expire_time=15
+                )
+
+        response.set_cookie(
+                key="access_token",
+                value=f"Bearer {update_access_token}",
+                httponly=True,
+                samesite="lax"
+            )
+
+        return TokenInfo(
+            access_token=update_access_token,
+            token_type="Bearer"
+        )

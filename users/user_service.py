@@ -33,15 +33,24 @@ class UserService:
         token = request.cookies.get(
             "access_token"
         )
-        if token is None:
+
+        refresh_token = request.cookies.get(
+            "refresh_token"
+        )
+
+        if token is None and refresh_token is None:
             raise HTTPException(
                 status_code=401,
                 detail="Ви вже вийшли або незареєстровані"
             )
 
         response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
 
-        return True
+
+        return {
+            "message": "user logout"
+        }
 
 
     def delete_user(user_id:int):

@@ -37,4 +37,14 @@ class AuthRepo:
         with session() as s:
             get_user = s.execute(statement=query)            
             return get_user.scalar_one_or_none()
-            
+
+
+    @staticmethod
+    def find_user_by_id(user_id:int):
+        query = select(CreateUserOrm).where(CreateUserOrm.id == user_id)
+        try:
+            with session() as s:
+                get_user = s.execute(statement=query).scalar_one_or_none()           
+                return get_user
+        except SQLAlchemyError as e:
+            raise e
