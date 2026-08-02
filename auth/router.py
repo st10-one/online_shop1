@@ -8,7 +8,7 @@ from .auth_service import AuthService
 
 
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/auth/login")
-router = APIRouter(prefix="/auth", tags=["registration and auth"])
+router = APIRouter(prefix="/auth", tags=["Auth🔒"])
 
 @router.post("/login")
 def login(resp:Response, login_data:UserRegistrations = Body(embed=True)) -> TokenInfo:

@@ -20,10 +20,16 @@ class UserService:
         
         my_user = UserDTO.get_current_user_by_id(current_id=my_id)
 
-        if not my_id:
+        if not my_user:
             raise HTTPException(
                 status_code=404,
                 detail="користувача неіснує!"
+            )
+
+        if my_user.is_active is False:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not actived"
             )
         
         return ShowUser.model_validate(my_user)

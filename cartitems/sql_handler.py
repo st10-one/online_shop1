@@ -77,8 +77,10 @@ class CartItemsDTO:
 
 
     @staticmethod 
-    def get_all_with_cartitems() -> list[CartItemsOrm] | list[None]:
-        stmt = select(CartItemsOrm)
+    def get_all_with_cartitems(user_id:int) -> list[CartItemsOrm] | list[None]:
+        stmt = select(CartItemsOrm).where(
+            CartItemsOrm.user_id == user_id
+        )
 
         try:
             with session() as s:

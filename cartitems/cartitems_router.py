@@ -3,7 +3,7 @@ from .cartitem_service import CartItemService
 from fastapi import Request
 
 
-b_router = APIRouter(prefix="/cartitems", tags=["Basket"])
+b_router = APIRouter(prefix="/cartitems", tags=["Cartitems 🛒"])
 
 
 @b_router.post("")
@@ -14,8 +14,8 @@ def adding_to_basket(product_id:int, request:Request):
     )
 
 @b_router.get("")
-def get_all_items():
-    return CartItemService.get_all_items()
+def get_all_items(request:Request):
+    return CartItemService.get_all_items_for_specific_user(request=request)
 
 
 @b_router.delete('/{product_id}')

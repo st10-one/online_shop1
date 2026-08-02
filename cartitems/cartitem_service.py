@@ -36,10 +36,13 @@ class CartItemService:
         
 
     @staticmethod
-    def get_all_items():
-        the_items = CartItemsDTO.get_all_with_cartitems()
+    def get_all_items_for_specific_user(request:Request):
+        my_id = get_current_user(request=request)
 
-        print(the_items)
+        the_items = CartItemsDTO.get_all_with_cartitems(
+            user_id=my_id
+        )
+
 
         if not the_items:
             raise HTTPException(

@@ -3,7 +3,7 @@ from .order_service import OrderService
 from .schemas import Orders
 
 
-orders_router = APIRouter(prefix="/orders", tags=['orders'])
+orders_router = APIRouter(prefix="/orders", tags=['Orders 📋'])
 
 
 @orders_router.post("")

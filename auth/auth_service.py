@@ -13,6 +13,7 @@ class AuthService:
     def registrations_user(response:Response, usr:BaseUser):
         new_user = AuthRepo.create_new_user_in_db(user_data=usr)
 
+
         if new_user:
             token_payload = {
                 "id": new_user.id,
@@ -25,9 +26,22 @@ class AuthService:
                 expire_time=15
             )
 
+            refresh_token = create_refresh_token(
+                data={
+                    "user_id": new_user.id
+                }
+            )
+
             response.set_cookie(
                 key="access_token",
                 value=f"Bearer {token}",
+                httponly=True,
+                samesite="lax"
+            )
+
+            response.set_cookie(
+                key="refresh_token",
+                value=f"Bearer {refresh_token}",
                 httponly=True,
                 samesite="lax"
             )

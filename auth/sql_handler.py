@@ -8,7 +8,6 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy import select
 
 
-
 class AuthRepo:
     @staticmethod
     def create_new_user_in_db(user_data:BaseUser) -> CreateUserOrm:
@@ -17,7 +16,8 @@ class AuthRepo:
                 user_obj = CreateUserOrm(
                     username = user_data.username,
                     email = user_data.email,
-                    password = hash_password(user_data.password)
+                    password = hash_password(user_data.password),
+                    is_active = True
                 )
 
                 s.add(user_obj)
@@ -29,6 +29,7 @@ class AuthRepo:
             raise HTTPException(status_code=400,  detail="Такий користувач вже існує")
         except SQLAlchemyError:
             raise HTTPException(400)
+
 
     @staticmethod
     def find_user_by_email(email:str) -> CreateUserOrm | None:

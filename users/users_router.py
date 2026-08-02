@@ -6,7 +6,7 @@ from .user_service import UserService
 
 
 
-user_router = APIRouter(prefix="/users", tags=["users"])
+user_router = APIRouter(prefix="/users", tags=["Users👤"])
 
 
 @user_router.get('/me')

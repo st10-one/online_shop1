@@ -4,7 +4,7 @@ from .schemas import CreateProduct, ReturnProductTabulation
 from auth.utils import get_token_by_cookies
 from .porduct_service import ProductService
 
-product_router = APIRouter(prefix="/products", tags=["Products"])
+product_router = APIRouter(prefix="/products", tags=["Products🔌"])
 
 
 @product_router.post("", dependencies=[Depends(get_token_by_cookies)])
