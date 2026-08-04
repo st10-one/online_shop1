@@ -9,7 +9,7 @@ from cartitems.cartitems_router import b_router
 
 
 
-app = FastAPI()
+app = FastAPI(title="Online Shop")
 
 app.include_router(router=router)
 app.include_router(router=product_router)
