@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from depends import get_current_user
+from depends import get_current_user, get_active_user
 from .sql_handler import CartItemsDTO
 from fastapi import Request
 
@@ -16,6 +16,14 @@ class CartItemService:
                 detail="Незнайдено користувача"
             )
 
+
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
         product_id = CartItemsDTO.get_product_id(id=product_id)
 
         if not product_id:
@@ -38,6 +46,15 @@ class CartItemService:
     @staticmethod
     def get_all_items_for_specific_user(request:Request):
         my_id = get_current_user(request=request)
+
+        
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )        
 
         the_items = CartItemsDTO.get_all_with_cartitems(
             user_id=my_id

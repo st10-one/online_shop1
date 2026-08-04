@@ -1,6 +1,7 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 
 from .sql_handler import ProductRepo
+from depends import get_active_user, get_current_user
 from .schemas import (
     CreateProduct,
     ShowProduct,
@@ -11,7 +12,17 @@ from .schemas import (
 
 class ProductService:
     @staticmethod
-    def add_product(prod:CreateProduct):
+    def add_product(prod:CreateProduct, request:Request):
+        my_id = get_current_user(request=request)        
+
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+
         new_product = ProductRepo.create_new_product(product_data=prod)
 
         if not new_product:
@@ -54,7 +65,16 @@ class ProductService:
     
 
     @staticmethod
-    def update_product(product_id:int, new_data:CreateProduct):
+    def update_product(product_id:int, new_data:CreateProduct, request:Request):
+        my_id = get_current_user(request=request)       
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+
         id_product_edited = ProductRepo.update_product_data_by_id(
             prod_id=product_id,
             data=new_data
@@ -71,7 +91,16 @@ class ProductService:
         }
 
     @staticmethod
-    def delete_product(prod_id:int):
+    def delete_product(prod_id:int, request:Request):
+        my_id = get_current_user(request=request)       
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+
         id_product_deleted = ProductRepo.delete_product_by_id(
             prod_id=prod_id,
         ) 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi import Depends
 from .schemas import CreateProduct, ReturnProductTabulation
 from auth.utils import get_token_by_cookies
@@ -8,13 +8,19 @@ product_router = APIRouter(prefix="/products", tags=["Products🔌"])
 
 
 @product_router.post("", dependencies=[Depends(get_token_by_cookies)])
-def create_new_product(new_product:CreateProduct):
-    return ProductService.add_product(prod=new_product)
+def create_new_product(new_product:CreateProduct, request:Request):
+    return ProductService.add_product(
+        prod=new_product,
+        request=Request
+
+    )
 
 
 @product_router.get("")
 def get_all_products(tab:ReturnProductTabulation = Depends()):
-    return ProductService.get_all_the_products(tabul=tab)
+    return ProductService.get_all_the_products(
+        tabul=tab,
+    )
 
 @product_router.get("/{product_id}")
 def get_one_products(product_id:int):
@@ -22,14 +28,16 @@ def get_one_products(product_id:int):
 
 
 @product_router.put("/{product_id}")
-def update_products_data(product_id:int, new_data:CreateProduct):
+def update_products_data(product_id:int, new_data:CreateProduct, request:Request):
     return ProductService.update_product(
         product_id=product_id,
-        new_data=new_data
+        new_data=new_data,
+        request=request
     )
 
 @product_router.delete("/{product_id}")
-def delete_products(prod_id:int):
+def delete_products(prod_id:int, request:Request):
     return ProductService.delete_product(
-        prod_id=prod_id
+        prod_id=prod_id, 
+        request=request
     )

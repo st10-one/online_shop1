@@ -1,6 +1,8 @@
-
 from typing import Annotated
 
+from sqlalchemy import select
+from db import session
+from auth.models import CreateUserOrm
 from fastapi import HTTPException, Request, File, UploadFile
 import jwt
 
@@ -48,6 +50,21 @@ def get_current_user(request:Request) -> int | None:
             status_code=401,
             detail="Токен підроблений або неправельний"
         )
+
+
+
+def get_active_user(user_id:int) -> bool | None:
+    active_query = select(CreateUserOrm).where(CreateUserOrm.id == user_id) # SELECT users.id FROM users WHERE id = user_id
+
+    with session() as s:
+        user = s.execute(active_query).scalar_one_or_none()
+
+    if user is None:
+        return None
+
+    if not user.is_active:
+        return None
+    return True 
 
 
 ProductImage = Annotated[UploadFile, File()]

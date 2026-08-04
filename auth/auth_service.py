@@ -2,7 +2,7 @@ from fastapi import HTTPException, Request, Response
 
 from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
 from .utils import create_access_token, verify_user, create_refresh_token, decoded_refresh_token
-from depends import get_current_user
+from depends import get_active_user
 
 
 from .sql_handler import AuthRepo
@@ -123,6 +123,13 @@ class AuthService:
     @staticmethod
     def update_access_token(request:Request, response:Response):
         user_id = decoded_refresh_token(request=request)
+        active_user = get_active_user(user_id=user_id)
+        
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
 
         if user_id is None:
             raise HTTPException(

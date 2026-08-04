@@ -4,7 +4,7 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from depends import get_current_user
+from depends import get_current_user, get_active_user
 
 
 class UserService:
@@ -17,6 +17,17 @@ class UserService:
                 status_code=404,
                 detail="id незнайдено!"
             )
+
+        active_user = get_active_user(user_id=my_id)
+
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+        
+
         
         my_user = UserDTO.get_current_user_by_id(current_id=my_id)
 
