@@ -20,3 +20,10 @@ def cancel_order(order_id:int, request:Request):
         order_id=order_id,
         request=request
     )
+
+
+@orders_router.get('')
+def get_my_orders(request:Request):
+    return OrderService.get_all_the_my_order(
+        request=request
+    )

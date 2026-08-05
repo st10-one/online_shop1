@@ -36,6 +36,7 @@ class OrderService:
 
         return ShowOrder.model_validate(my_order)
 
+
     @staticmethod
     def cancel_order(order_id:int, request:Request):
         my_id = get_current_user(request=request)
@@ -66,3 +67,33 @@ class OrderService:
             )
 
         return cancel_order
+
+
+    @staticmethod
+    def get_all_the_my_order(request:Request):
+        my_id = get_current_user(request=request)
+
+        if not my_id:
+            raise HTTPException(
+                status_code=404
+            )
+
+        active_user = get_active_user(user_id=my_id)
+        
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+
+        get_orders = OrderDTO.get_my_orders(
+            user_id=my_id
+        )
+
+        if get_orders is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Your orders is not found"
+            )
+
+        return {"my_orders": get_orders}

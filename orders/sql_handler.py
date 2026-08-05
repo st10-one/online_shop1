@@ -105,3 +105,19 @@ class OrderDTO:
 
         except SQLAlchemyError as e:
             raise e
+
+
+    @staticmethod
+    def get_my_orders(user_id:int):
+        get_all_the_orders = select(MakeOrderOrm).where(MakeOrderOrm.user_id == user_id)
+
+        try:
+            with session() as s:
+                results = s.execute(get_all_the_orders).scalars().all()
+
+                if results is None:
+                    return None
+
+                return results
+        except SQLAlchemyError as e:
+            raise e
