@@ -12,9 +12,7 @@ from .schemas import (
 
 class ProductService:
     @staticmethod
-    def add_product(prod:CreateProduct, request:Request):
-        my_id = get_current_user(request=request)        
-
+    def add_product(prod:CreateProduct, my_id:int):
         active_user = get_active_user(user_id=my_id)
 
         if not active_user:
@@ -65,8 +63,7 @@ class ProductService:
     
 
     @staticmethod
-    def update_product(product_id:int, new_data:CreateProduct, request:Request):
-        my_id = get_current_user(request=request)       
+    def update_product(product_id:int, new_data:CreateProduct, my_id:int):
         active_user = get_active_user(user_id=my_id)
 
         if not active_user:
@@ -83,7 +80,7 @@ class ProductService:
         if not id_product_edited:
             raise HTTPException(
                 status_code=400,
-                detail="happen the error"
+                detail="такого продукту неіснує"
             )
 
         return {
@@ -91,8 +88,7 @@ class ProductService:
         }
 
     @staticmethod
-    def delete_product(prod_id:int, request:Request):
-        my_id = get_current_user(request=request)       
+    def delete_product(prod_id:int, my_id:int):
         active_user = get_active_user(user_id=my_id)
 
         if not active_user:

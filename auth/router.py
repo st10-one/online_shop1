@@ -1,7 +1,8 @@
-from fastapi import APIRouter
-from fastapi import Response, Request
+from fastapi import APIRouter, Depends
+from fastapi import Response
 from fastapi import Body
 from fastapi.security import OAuth2PasswordBearer
+from .utils import decoded_refresh_token
 from .schemas import UserRegistrations, BaseUser, TokenInfo, ShowUser
 from .auth_service import AuthService
 
@@ -27,8 +28,8 @@ def create_user(resp:Response, registration_data:BaseUser = Body(embed=True)) ->
 
 
 @router.post('/refresh')
-def refresh_token(request:Request, response:Response) -> TokenInfo:
+def refresh_token(response:Response, user_id:int = Depends(decoded_refresh_token)) -> TokenInfo:
     return AuthService.update_access_token(
-        request=request,
+        user_id=user_id,
         response=response
     )

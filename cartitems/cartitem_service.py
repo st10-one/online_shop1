@@ -7,9 +7,7 @@ from fastapi import Request
 
 class CartItemService:
     @staticmethod
-    def add_new_item(product_id:int, request:Request):
-        my_id = get_current_user(request=request)
-
+    def add_new_item(product_id:int, my_id:int):
         if not my_id:
             raise HTTPException(
                 status_code=404,
@@ -44,10 +42,7 @@ class CartItemService:
         
 
     @staticmethod
-    def get_all_items_for_specific_user(request:Request):
-        my_id = get_current_user(request=request)
-
-        
+    def get_all_items_for_specific_user(my_id:int):
         active_user = get_active_user(user_id=my_id)
 
         if not active_user:
@@ -71,8 +66,16 @@ class CartItemService:
 
 
     @staticmethod
-    def delete_product_from_cartitem(product_id:int):
-        id_deleted_of_product = CartItemsDTO.delete_from_cart_by_id(prod_id=product_id)
+    def delete_product_from_cartitem(product_id:int, my_id:int):
+        active_user = get_active_user(user_id=my_id)
+
+        if not active_user:
+            raise HTTPException(
+                status_code=403,
+                detail="User is not active"
+            )
+        
+        id_deleted_of_product = CartItemsDTO.delete_from_cart_by_id(prod_id=product_id, user_id=my_id)
 
         if not id_deleted_of_product:
             raise HTTPException(

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from fastapi import Request
+from fastapi import Request, Depends
+from depends import get_current_user
 from fastapi import Response
 
 from .user_service import UserService
@@ -10,8 +11,8 @@ user_router = APIRouter(prefix="/users", tags=["Users👤"])
 
 
 @user_router.get('/me')
-def get_me(requ:Request):
-    return UserService.get_me_by_id(request=requ)
+def get_me(requ:Request, user_id:int = Depends(get_current_user)):
+    return UserService.get_me_by_id(user_id=user_id)
 
 
 @user_router.post('/logout')

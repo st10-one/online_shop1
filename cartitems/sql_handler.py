@@ -96,8 +96,8 @@ class CartItemsDTO:
 
 
     @staticmethod
-    def delete_from_cart_by_id(prod_id:int):
-        stmt = delete(CartItemsOrm).where(CartItemsOrm.product_id == prod_id).returning(CartItemsOrm.product_id)
+    def delete_from_cart_by_id(prod_id:int, user_id:int):
+        stmt = delete(CartItemsOrm).where(CartItemsOrm.product_id == prod_id and CartItem.user_id == user_id).returning(CartItemsOrm.product_id)
 
         try:
             with session() as s:

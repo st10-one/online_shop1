@@ -9,16 +9,15 @@ from depends import get_current_user, get_active_user
 
 class UserService:
     @staticmethod
-    def get_me_by_id(request:Request) -> ShowUser | Exception:
-        my_id = get_current_user(request=request)
+    def get_me_by_id(user_id:int) -> ShowUser | Exception:
 
-        if not my_id:
+        if not user_id:
             raise HTTPException(
                 status_code=404,
                 detail="id незнайдено!"
             )
 
-        active_user = get_active_user(user_id=my_id)
+        active_user = get_active_user(user_id=user_id)
 
 
         if not active_user:
@@ -29,7 +28,7 @@ class UserService:
         
 
         
-        my_user = UserDTO.get_current_user_by_id(current_id=my_id)
+        my_user = UserDTO.get_current_user_by_id(current_id=user_id)
 
         if not my_user:
             raise HTTPException(

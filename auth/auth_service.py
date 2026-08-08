@@ -60,7 +60,7 @@ class AuthService:
         if not users:
             raise HTTPException(
                 status_code=404,
-                detail="Користувача не знайдено!"
+                detail="Неправильний email або пароль"
             )
 
         user_password = registrations_data.password
@@ -79,7 +79,7 @@ class AuthService:
         if not verifty:
             raise HTTPException(
                 status_code=404,
-                detail="Неправильний пароль"
+                detail="Неправильний email або пароль"
             )
         
         token_payload = {
@@ -121,8 +121,7 @@ class AuthService:
 
 
     @staticmethod
-    def update_access_token(request:Request, response:Response):
-        user_id = decoded_refresh_token(request=request)
+    def update_access_token(user_id:int, response:Response):
         active_user = get_active_user(user_id=user_id)
         
         if not active_user:

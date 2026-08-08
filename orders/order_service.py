@@ -1,15 +1,13 @@
 from .schemas import Orders, ShowOrder
-from fastapi import Request, HTTPException
+from fastapi import HTTPException
 
 from .sql_handler import OrderDTO
-from depends import get_current_user, get_active_user
+from depends import get_active_user
 
 
 class OrderService:
     @staticmethod
-    def make_order(data:Orders, request:Request):
-        my_id = get_current_user(request=request)
-
+    def make_order(data:Orders, my_id:int):
         if not my_id:
             raise HTTPException(
                 status_code=404
@@ -38,9 +36,7 @@ class OrderService:
 
 
     @staticmethod
-    def cancel_order(order_id:int, request:Request):
-        my_id = get_current_user(request=request)
-
+    def cancel_order(order_id:int, my_id:int):
         if not my_id:
             raise HTTPException(
                 status_code=404
@@ -70,9 +66,7 @@ class OrderService:
 
 
     @staticmethod
-    def get_all_the_my_order(request:Request):
-        my_id = get_current_user(request=request)
-
+    def get_all_the_my_order(my_id:int):
         if not my_id:
             raise HTTPException(
                 status_code=404
