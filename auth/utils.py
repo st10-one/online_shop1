@@ -9,7 +9,6 @@ from jwt.exceptions import InvalidKeyError, InvalidAlgorithmError,ExpiredSignatu
 from config import settings
 
 
-
 def create_access_token(data:dict, expire_time:int|None = None) -> str | None:
     to_encode = data.copy()
 

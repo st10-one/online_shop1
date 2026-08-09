@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Request, Response
+from fastapi import HTTPException, Response
 
 from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
 from .utils import create_access_token, verify_user, create_refresh_token

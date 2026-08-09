@@ -5,6 +5,7 @@ from .models import CreateUserOrm
 from .schemas import BaseUser
 from .utils import hash_password
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from .utils import Roles
 from sqlalchemy import select
 
 
@@ -17,6 +18,7 @@ class AuthRepo:
                     username = user_data.username,
                     email = user_data.email,
                     password = hash_password(user_data.password),
+                    role = Roles.USER.value,
                     is_active = True
                 )
 
