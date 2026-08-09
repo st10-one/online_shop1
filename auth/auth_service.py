@@ -1,8 +1,8 @@
 from fastapi import HTTPException, Request, Response
 
 from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
-from .utils import create_access_token, verify_user, create_refresh_token, decoded_refresh_token
-from depends import get_active_user
+from .utils import create_access_token, verify_user, create_refresh_token
+from depends import get_active_user, change_user_active
 
 
 from .sql_handler import AuthRepo
@@ -100,6 +100,11 @@ class AuthService:
             }
         )
 
+        change_user_active(
+            is_active=True,
+            user_id=users.id
+        )
+        
         response.set_cookie(
                 key="access_token",
                 value=f"Bearer {access_token}",
@@ -113,6 +118,8 @@ class AuthService:
                 httponly=True,
                 samesite="lax"
             )
+
+        
 
         return TokenInfo(
             access_token=access_token,

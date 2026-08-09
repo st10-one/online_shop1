@@ -4,7 +4,7 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from depends import get_current_user, get_active_user
+from depends import change_user_active, get_active_user
 
 
 class UserService:
@@ -45,7 +45,7 @@ class UserService:
         return ShowUser.model_validate(my_user)
 
 
-    def logout(response:Response, request:Request) -> bool | Exception:
+    def logout(response:Response, request:Request, user_id:int) -> bool | Exception:
         token = request.cookies.get(
             "access_token"
         )
@@ -59,13 +59,19 @@ class UserService:
                 status_code=401,
                 detail="Ви вже вийшли або незареєстровані"
             )
-
+        
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
 
 
+        logout_user_id = change_user_active(
+            is_active=False,
+            user_id=user_id
+        )
+
         return {
-            "message": "user logout"
+            "message": "user logout",
+            "user_id":logout_user_id
         }
 
 

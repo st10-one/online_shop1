@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from sqlalchemy import select
+from sqlalchemy import select, update
+from sqlalchemy.exc import SQLAlchemyError
 from db import session
 from auth.models import CreateUserOrm
 from fastapi import HTTPException, Request, File, UploadFile
@@ -8,6 +9,26 @@ import jwt
 
 from config import settings
 
+
+def change_user_active(is_active:bool, user_id:int) -> bool:
+    if not isinstance(is_active, bool):
+        return "Incorect of the type"
+
+    update_user_active_query = update(CreateUserOrm).where(CreateUserOrm.id == user_id).values(is_active = is_active).returning(CreateUserOrm.id)
+
+    try:
+        with session() as s:
+            res = s.execute(update_user_active_query).scalar_one_or_none()
+            s.commit()
+
+            return res
+    except SQLAlchemyError as e:
+        s.rollback()
+        raise e
+    
+
+
+    
 
 def get_current_user(request:Request) -> int | None:
     token = request.cookies.get(

@@ -16,8 +16,8 @@ def get_me(requ:Request, user_id:int = Depends(get_current_user)):
 
 
 @user_router.post('/logout')
-def exit_with_acconunt(resp:Response, request:Request):
-    return UserService.logout(resp, request)
+def exit_with_acconunt(resp:Response, request:Request, user_id:int = Depends(get_current_user)):
+    return UserService.logout(resp, request, user_id)
 
 
 @user_router.delete("/{user_id}")
