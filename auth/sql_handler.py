@@ -5,7 +5,7 @@ from .models import CreateUserOrm
 from .schemas import BaseUser
 from .utils import hash_password
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from .utils import Roles
+from .models import Roles
 from sqlalchemy import select
 
 

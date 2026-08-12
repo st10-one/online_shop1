@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Annotated
 
 from sqlalchemy import select, update
@@ -10,9 +9,7 @@ import jwt
 
 from config import settings
 
-class Roles(str, Enum):
-    USER = "USER"
-    ADMIN = "ADMIN"
+
     
 
 def change_user_active(is_active:bool, user_id:int) -> bool:
@@ -32,20 +29,12 @@ def change_user_active(is_active:bool, user_id:int) -> bool:
         raise e
 
 
-def check_admin(user_data:dict):
-    user_data = {
-        "role": "admin"
-    }
-
-    if user_data["role"] != Roles.ADMIN.value:
-        raise HTTPException(
-            status_code=403,
-            detail="У вас нема доступа"
-        )
-
+def check_admin(user_data:dict) -> Exception | bool:
+    if user_data["role"] != "ADMIN":
+        return False
     return True
 
-def get_current_user(request:Request) -> int | None:
+def get_current_user(request:Request) -> dict | None:
     token = request.cookies.get(
         "access_token"
     )
@@ -67,11 +56,9 @@ def get_current_user(request:Request) -> int | None:
             key=settings.SECRET_JWT,
             algorithms=["HS256"]
         )
-        
-        my_id = payload.get("id")
 
-        if my_id:
-            return my_id
+        if payload:
+            return payload
         
         return None
     

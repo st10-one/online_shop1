@@ -1,12 +1,15 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy import func, Enum
 from sqlalchemy.orm import mapped_column, relationship
+from enum import Enum as CEnum
 
 from datetime import datetime
-
-from .utils import Roles
 from db import Base
 
+
+class Roles(str, CEnum):
+    USER = "USER"
+    ADMIN = "ADMIN"
 
 class CreateUserOrm(Base):
     __tablename__ = "users"

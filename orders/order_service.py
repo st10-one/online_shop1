@@ -2,18 +2,18 @@ from .schemas import Orders, ShowOrder
 from fastapi import HTTPException
 
 from .sql_handler import OrderDTO
-from depends import get_active_user
+from dependency import get_active_user
 
 
 class OrderService:
     @staticmethod
-    def make_order(data:Orders, my_id:int):
-        if not my_id:
+    def make_order(data:Orders, user:dict):
+        if not user:
             raise HTTPException(
                 status_code=404
             )
 
-        active_user = get_active_user(user_id=my_id)
+        active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
             raise HTTPException(
@@ -22,7 +22,7 @@ class OrderService:
             )
 
         my_order = OrderDTO.add_order(
-            user_id=my_id,
+            user_id=user["id"],
             data=data
         )
 
@@ -36,13 +36,13 @@ class OrderService:
 
 
     @staticmethod
-    def cancel_order(order_id:int, my_id:int):
-        if not my_id:
+    def cancel_order(order_id:int, user:dict):
+        if not user:
             raise HTTPException(
                 status_code=404
             )
 
-        active_user = get_active_user(user_id=my_id)
+        active_user = get_active_user(user_id=user["id"])
         
         if not active_user:
             raise HTTPException(
@@ -53,7 +53,7 @@ class OrderService:
 
         cancel_order = OrderDTO.cancel_order_by_id(
             order_id=order_id,
-            user_id=my_id
+            user_id=user["id"]
         )
 
         if cancel_order is None:
@@ -66,13 +66,13 @@ class OrderService:
 
 
     @staticmethod
-    def get_all_the_my_order(my_id:int):
-        if not my_id:
+    def get_all_the_my_order(user:dict):
+        if not user:
             raise HTTPException(
                 status_code=404
             )
 
-        active_user = get_active_user(user_id=my_id)
+        active_user = get_active_user(user_id=user["id"])
         
         if not active_user:
             raise HTTPException(
@@ -81,7 +81,7 @@ class OrderService:
             )
 
         get_orders = OrderDTO.get_my_orders(
-            user_id=my_id
+            user_id=user["id"]
         )
 
         if get_orders is None:

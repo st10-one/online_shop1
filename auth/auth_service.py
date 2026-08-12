@@ -2,7 +2,7 @@ from fastapi import HTTPException, Response
 
 from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
 from .utils import create_access_token, verify_user, create_refresh_token
-from depends import get_active_user, change_user_active
+from dependency import get_active_user, change_user_active
 
 
 from .sql_handler import AuthRepo
@@ -18,7 +18,8 @@ class AuthService:
             token_payload = {
                 "id": new_user.id,
                 "sub": new_user.username,
-                "email": new_user.email
+                "email": new_user.email,
+                "role":new_user.role
             }
 
             token = create_access_token(
@@ -85,7 +86,8 @@ class AuthService:
         token_payload = {
             "id": users.id,
             "sub": users.username,
-            "email": users.email
+            "email": users.email,
+            "role": users.role
             }
 
         access_token = create_access_token(
@@ -153,10 +155,11 @@ class AuthService:
 
 
         token_payload = {
-                    "id": users.id,
-                    "sub": users.username,
-                    "email": users.email
-                    }
+                "id": users.id,
+                "sub": users.username,
+                "email": users.email,
+                "role": users.role
+            }
         
         update_access_token = create_access_token(
                     data=token_payload,

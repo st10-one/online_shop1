@@ -1,7 +1,7 @@
-from fastapi import HTTPException, Request
+from fastapi import HTTPException
 
 from .sql_handler import ProductRepo
-from depends import get_active_user, get_current_user
+from dependency import get_active_user, check_admin
 from .schemas import (
     CreateProduct,
     ShowProduct,
@@ -12,13 +12,21 @@ from .schemas import (
 
 class ProductService:
     @staticmethod
-    def add_product(prod:CreateProduct, my_id:int):
-        active_user = get_active_user(user_id=my_id)
+    def add_product(prod:CreateProduct, user:dict):
+        active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
             raise HTTPException(
                 status_code=403,
                 detail="User is not active"
+            )
+
+        is_admin = check_admin(user_data=user)
+
+        if not is_admin:
+            raise HTTPException(
+                status_code=403,
+                detail="you don`t have an access"
             )
 
         new_product = ProductRepo.create_new_product(product_data=prod)
@@ -63,14 +71,23 @@ class ProductService:
     
 
     @staticmethod
-    def update_product(product_id:int, new_data:CreateProduct, my_id:int):
-        active_user = get_active_user(user_id=my_id)
+    def update_product(product_id:int, new_data:CreateProduct, user:dict):
+        active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
             raise HTTPException(
                 status_code=403,
                 detail="User is not active"
             )
+
+        is_admin = check_admin(user_data=user)
+
+        if not is_admin:
+            raise HTTPException(
+                status_code=403,
+                detail="you don`t have an access"
+            )
+
 
         id_product_edited = ProductRepo.update_product_data_by_id(
             prod_id=product_id,
@@ -88,13 +105,21 @@ class ProductService:
         }
 
     @staticmethod
-    def delete_product(prod_id:int, my_id:int):
-        active_user = get_active_user(user_id=my_id)
+    def delete_product(prod_id:int, user:dict):
+        active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
             raise HTTPException(
                 status_code=403,
                 detail="User is not active"
+            )
+
+        is_admin = check_admin(user_data=user)
+
+        if not is_admin:
+            raise HTTPException(
+                status_code=403,
+                detail="you don`t have an access"
             )
 
         id_product_deleted = ProductRepo.delete_product_by_id(
@@ -108,5 +133,5 @@ class ProductService:
             )
 
         return {
-            "edited_id": id_product_deleted
+            "deleted_id": id_product_deleted
         }

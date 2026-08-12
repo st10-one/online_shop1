@@ -4,20 +4,20 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from depends import change_user_active, get_active_user
+from dependency import change_user_active, get_active_user, check_admin
 
 
 class UserService:
     @staticmethod
-    def get_me_by_id(user_id:int) -> ShowUser | Exception:
+    def get_me_by_id(user:dict) -> ShowUser | Exception:
 
-        if not user_id:
+        if not user:
             raise HTTPException(
                 status_code=404,
                 detail="id незнайдено!"
             )
 
-        active_user = get_active_user(user_id=user_id)
+        active_user = get_active_user(user_id=user["id"])
 
 
         if not active_user:
@@ -28,7 +28,7 @@ class UserService:
         
 
         
-        my_user = UserDTO.get_current_user_by_id(current_id=user_id)
+        my_user = UserDTO.get_current_user_by_id(current_id=user["id"])
 
         if not my_user:
             raise HTTPException(
@@ -45,7 +45,7 @@ class UserService:
         return ShowUser.model_validate(my_user)
 
 
-    def logout(response:Response, request:Request, user_id:int) -> bool | Exception:
+    def logout(response:Response, request:Request, user:dict) -> bool | Exception:
         token = request.cookies.get(
             "access_token"
         )
@@ -66,7 +66,7 @@ class UserService:
 
         logout_user_id = change_user_active(
             is_active=False,
-            user_id=user_id
+            user_id=user["id"]
         )
 
         return {
@@ -75,7 +75,15 @@ class UserService:
         }
 
 
-    def delete_user(user_id:int):
+    def delete_user(user_id:int, user:dict):
+        is_admin = check_admin(user_data=user)
+
+        if not is_admin:
+            raise HTTPException(
+                status_code=403,
+                detail="You don`t have an access"
+            )
+
         deleted_user = UserDTO.delete_user_by_id(user_id=user_id)
 
         if not deleted_user:

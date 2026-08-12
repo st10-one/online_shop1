@@ -31,7 +31,6 @@ def create_access_token(data:dict, expire_time:int|None = None) -> str | None:
         return None
 
 
-
 def hash_password(my_password:str):
     return bcrypt.hashpw(
         password=my_password.encode(),
