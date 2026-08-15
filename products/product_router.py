@@ -1,16 +1,18 @@
 from fastapi import APIRouter
 from fastapi import Depends
 from .schemas import CreateProduct, ReturnProductTabulation
-from dependency import get_current_user
+from core_utils import get_current_user, ProductImage, get_product_data
+from dependencies import get_product_service
 from .porduct_service import ProductService
 
 product_router = APIRouter(prefix="/products", tags=["Products🔌"])
 
 
 @product_router.post("")
-def create_new_product(new_product:CreateProduct, user:dict = Depends(get_current_user)):
-    return ProductService.add_product(
+def create_new_product(photo:ProductImage, new_product:CreateProduct = Depends(get_product_data), product_service:ProductService = Depends(get_product_service), user:dict = Depends(get_current_user)):
+    return product_service.add_product(
         prod=new_product,
+        photo=photo,
         user=user
     )
 

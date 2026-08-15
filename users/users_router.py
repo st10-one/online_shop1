@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi import Request, Depends
-from dependency import get_current_user
+from core_utils import get_current_user
 from fastapi import Response
 
 from .user_service import UserService

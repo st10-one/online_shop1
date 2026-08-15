@@ -1,7 +1,11 @@
 from fastapi import HTTPException
 
 from .sql_handler import ProductRepo
-from dependency import get_active_user, check_admin
+from core_utils import get_active_user, check_admin, ProductImage
+
+from io import BytesIO
+
+from S3.base import Storage
 from .schemas import (
     CreateProduct,
     ShowProduct,
@@ -11,8 +15,10 @@ from .schemas import (
 
 
 class ProductService:
-    @staticmethod
-    def add_product(prod:CreateProduct, user:dict):
+    def __init__(self, storage:Storage):
+        self.storage = storage
+
+    def add_product(self, prod:CreateProduct, photo:ProductImage, user:dict):
         active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
@@ -29,14 +35,24 @@ class ProductService:
                 detail="you don`t have an access"
             )
 
-        new_product = ProductRepo.create_new_product(product_data=prod)
+        filename = photo.filename
+        file_content = photo.file.read(1024)
+        file_len = len(file_content)
+        file_content_type = photo.content_type
 
-        if not new_product:
-            raise HTTPException(
-                status_code=400,
-                detail="Product is not exist"
-            )
+        file_data = BytesIO(file_content)
+
+
+        url = self.storage.upload(
+            filename=filename,
+            file_data=file_data,
+            lenght=file_len,
+            content_type=file_content_type
+        )
+
+        new_product = ProductRepo.create_new_product(product_data=prod, url=url)
         
+
         return ShowProduct.model_validate(new_product)
     
     @staticmethod
@@ -124,13 +140,7 @@ class ProductService:
 
         id_product_deleted = ProductRepo.delete_product_by_id(
             prod_id=prod_id,
-        ) 
-
-        if not id_product_deleted:
-            raise HTTPException(
-                status_code=400,
-                detail="happen the error"
-            )
+        )
 
         return {
             "deleted_id": id_product_deleted

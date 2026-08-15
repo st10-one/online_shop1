@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from dependency import get_current_user
+from core_utils import get_current_user
 from .cartitem_service import CartItemService
 
 

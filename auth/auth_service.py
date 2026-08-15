@@ -2,7 +2,7 @@ from fastapi import HTTPException, Response
 
 from .schemas import BaseUser, ShowUser, UserRegistrations, TokenInfo
 from .utils import create_access_token, verify_user, create_refresh_token
-from dependency import get_active_user, change_user_active
+from core_utils import get_active_user, change_user_active
 
 
 from .sql_handler import AuthRepo

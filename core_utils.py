@@ -2,15 +2,29 @@ from typing import Annotated
 
 from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
+from products.schemas import CreateProduct
 from db import session
 from auth.models import CreateUserOrm
 from fastapi import HTTPException, Request, File, UploadFile
 import jwt
 
 from config import settings
+from fastapi import Form
+from decimal import Decimal
 
+def get_product_data(
+    name: str = Form(...),
+    price: Decimal = Form(...),
+    quantity: int = Form(...),
+    description: str = Form(...),
+) -> CreateProduct:
 
-    
+    return CreateProduct(
+        name=name,
+        price=price,
+        quantity=quantity,
+        description=description,
+    )
 
 def change_user_active(is_active:bool, user_id:int) -> bool:
     if not isinstance(is_active, bool):

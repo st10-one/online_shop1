@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from dependency import get_active_user
+from core_utils import get_active_user
 from .sql_handler import CartItemsDTO
 
 

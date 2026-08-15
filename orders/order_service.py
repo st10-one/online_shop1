@@ -2,7 +2,7 @@ from .schemas import Orders, ShowOrder
 from fastapi import HTTPException
 
 from .sql_handler import OrderDTO
-from dependency import get_active_user
+from core_utils import get_active_user
 
 
 class OrderService:

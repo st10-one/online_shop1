@@ -4,7 +4,7 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from dependency import change_user_active, get_active_user, check_admin
+from core_utils import change_user_active, get_active_user, check_admin
 
 
 class UserService:

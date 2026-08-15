@@ -10,6 +10,11 @@ class BaseConfigApp(BaseSettings):
     DB_PORT:str
     DB_NAME:str
 
+    s3_access_key: str
+    s3_secret_key:str
+    s3_bucket_name:str
+    s3_endpoint:str
+
     model_config = SettingsConfigDict(env_file=".env")
 
 

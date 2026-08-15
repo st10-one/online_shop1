@@ -8,7 +8,7 @@ from sqlalchemy import delete, select, update
 
 class ProductRepo:
     @staticmethod
-    def create_new_product(product_data:CreateProduct) -> CreateProductOrm | None:
+    def create_new_product(product_data:CreateProduct, url:str) -> CreateProductOrm | None:
         try:
             with session() as s:
                 new_product = CreateProductOrm(
@@ -16,7 +16,7 @@ class ProductRepo:
                     price=product_data.price,
                     quantity=product_data.quantity,
                     description=product_data.description,
-                    image_url=product_data.image_url
+                    image_url=url
                 )
 
                 s.add(new_product)

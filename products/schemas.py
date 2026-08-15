@@ -3,19 +3,21 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic import Field
 
+from decimal import Decimal
+
 
 class CreateProduct(BaseModel):
     name:str
-    price:float = Field(ge=0.01)
+    price:Decimal = Field(ge=0.1)
     quantity:int = Field(ge=0)
     description:str
-    image_url:str
 
     model_config = {'from_attributes':True}
 
 
 class ShowProduct(CreateProduct):
     id:int
+    image_url:str
     create_at:datetime
 
     model_config = {'from_attributes':True}
