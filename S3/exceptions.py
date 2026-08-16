@@ -5,3 +5,6 @@ class StogareException(Exception):
 class StogareUploadExcepion(StogareException):
     pass
 
+
+class StorageDeleteException(StogareException):
+    pass

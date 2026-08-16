@@ -8,6 +8,12 @@ class Storage(ABC):
         pass
 
 
+    @abstractmethod
+    def delete(
+        self,
+        url:str
+    ):
+        pass
 
 
     

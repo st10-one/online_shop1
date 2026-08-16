@@ -37,8 +37,8 @@ def update_products_data(product_id:int, new_data:CreateProduct, user:dict = Dep
     )
 
 @product_router.delete("/{product_id}")
-def delete_products(prod_id:int, user:dict = Depends(get_current_user)):
-    return ProductService.delete_product(
+def delete_products(prod_id:int, product_service:ProductService = Depends(get_product_service), user:dict = Depends(get_current_user)):
+    return product_service.delete_product(
         prod_id=prod_id, 
         user=user
     )

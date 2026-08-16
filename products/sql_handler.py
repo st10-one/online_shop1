@@ -88,7 +88,7 @@ class ProductRepo:
 
     @staticmethod  
     def delete_product_by_id(prod_id:int):
-        sql_query = delete(CreateProductOrm).where(CreateProductOrm.id == prod_id).returning(CreateProductOrm.id)
+        sql_query = delete(CreateProductOrm).where(CreateProductOrm.id == prod_id).returning(CreateProductOrm.image_url)
 
         try:
             with session() as s:

@@ -120,8 +120,7 @@ class ProductService:
             "edited_id": id_product_edited
         }
 
-    @staticmethod
-    def delete_product(prod_id:int, user:dict):
+    def delete_product(self, prod_id:int, user:dict):
         active_user = get_active_user(user_id=user["id"])
 
         if not active_user:
@@ -138,10 +137,12 @@ class ProductService:
                 detail="you don`t have an access"
             )
 
-        id_product_deleted = ProductRepo.delete_product_by_id(
+        url = ProductRepo.delete_product_by_id(
             prod_id=prod_id,
         )
 
+        self.storage.delete(url=url)
+
         return {
-            "deleted_id": id_product_deleted
+            "status": True
         }

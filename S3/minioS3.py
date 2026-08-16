@@ -2,8 +2,9 @@ from minio import Minio, S3Error
 from io import BytesIO
 from config import BaseConfigApp
 
+from .utils import parseurl
 from .base import Storage
-from .exceptions import StogareUploadExcepion
+from .exceptions import StogareUploadExcepion, StorageDeleteException
 
 
 
@@ -42,4 +43,16 @@ class MinioStorage(Storage):
         except S3Error:
             raise StogareUploadExcepion(
                f"Failed to upload file: {filename}"
+            )
+
+    def delete(self, url:str):
+        try:
+            photo_name = parseurl(url=url)[1]
+            self.client.remove_object(
+                bucket_name=self.bucket_name,
+                object_name=photo_name
+            )
+        except S3Error:
+            raise StorageDeleteException(
+                f"Failed to upload file: {photo_name}"
             )
