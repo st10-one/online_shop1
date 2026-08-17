@@ -4,44 +4,13 @@ from fastapi import Response
 
 from auth.schemas import ShowUser
 from .sql_handler import UserDTO
-from core_utils import change_user_active, get_active_user, check_admin
+from core_utils import change_user_active
 
 
 class UserService:
     @staticmethod
     def get_me_by_id(user:dict) -> ShowUser | Exception:
-
-        if not user:
-            raise HTTPException(
-                status_code=404,
-                detail="id незнайдено!"
-            )
-
-        active_user = get_active_user(user_id=user["id"])
-
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-        
-
-        
-        my_user = UserDTO.get_current_user_by_id(current_id=user["id"])
-
-        if not my_user:
-            raise HTTPException(
-                status_code=404,
-                detail="користувача неіснує!"
-            )
-
-        if my_user.is_active is False:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not actived"
-            )
-        
+        my_user = UserDTO.get_current_user_by_id(current_id=user.id)
         return ShowUser.model_validate(my_user)
 
 
@@ -66,7 +35,7 @@ class UserService:
 
         logout_user_id = change_user_active(
             is_active=False,
-            user_id=user["id"]
+            user_id=user.id
         )
 
         return {
@@ -75,15 +44,7 @@ class UserService:
         }
 
 
-    def delete_user(user_id:int, user:dict):
-        is_admin = check_admin(user_data=user)
-
-        if not is_admin:
-            raise HTTPException(
-                status_code=403,
-                detail="You don`t have an access"
-            )
-
+    def delete_user(user_id:int):
         deleted_user = UserDTO.delete_user_by_id(user_id=user_id)
 
         if not deleted_user:

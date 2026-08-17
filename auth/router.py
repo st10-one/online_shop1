@@ -3,6 +3,7 @@ from fastapi import Response
 from fastapi import Body
 from fastapi.security import OAuth2PasswordBearer
 from .utils import decoded_refresh_token
+from core_utils import get_active_user
 from .schemas import UserRegistrations, BaseUser, TokenInfo, ShowUser
 from .auth_service import AuthService
 

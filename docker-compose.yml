@@ -1,0 +1,52 @@
+
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    container_name: db_container
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}  # Убран лишний пробел перед знаком равенства
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # Важно: без этого данные БД сотрутся при перезапуске
+
+  S3:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${s3_access_key}
+      - MINIO_ROOT_PASSWORD=${s3_secret_key}
+    command: server /data --console-address ":9001"    
+    volumes:
+      - minio_data:/data  # Важно: без этого файлы в MinIO сотрутся при перезапуске
+
+  backend:
+    build: .  
+    container_name: backend_container
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - S3
+    environment:
+      - DB_HOST=db  # Внутри сети Docker нужно использовать имя сервиса ("db"), а не localhost
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      # Сюда стоит добавить переменные для связи бэкенда с MinIO:
+      - S3_ENDPOINT=http://S3:9000  # Имя сервиса "S3" используется как хост
+      - S3_ACCESS_KEY=${s3_access_key}
+      - S3_SECRET_KEY=${s3_secret_key}
+
+# Объявляем тома (volumes), чтобы данные не пропадали
+volumes:
+  pg_data:
+  minio_data:

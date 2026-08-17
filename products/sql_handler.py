@@ -68,7 +68,6 @@ class ProductRepo:
             description = data.description,
             quantity = data.quantity,
             price = data.price,
-            image_url = data.image_url
         ).returning(CreateProductOrm.id)
 
         try:
@@ -101,6 +100,7 @@ class ProductRepo:
                 return result
         except SQLAlchemyError:
             s.rollback()
+            raise SQLAlchemyError()
 
 
     

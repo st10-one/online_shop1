@@ -7,20 +7,6 @@ from .sql_handler import CartItemsDTO
 class CartItemService:
     @staticmethod
     def add_new_item(product_id:int, user:dict):
-        if not user:
-            raise HTTPException(
-                status_code=404,
-                detail="Незнайдено користувача"
-            )
-
-
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
         product_id = CartItemsDTO.get_product_id(id=product_id)
 
         if not product_id:
@@ -29,7 +15,7 @@ class CartItemService:
                 detail="Товар неіснує"
             )
 
-        adding = CartItemsDTO.add_to_cart(user_id=user["id"], product_id=product_id)
+        adding = CartItemsDTO.add_to_cart(user_id=user.id, product_id=product_id)
 
         if not adding["added"]:
             raise HTTPException(
@@ -41,17 +27,9 @@ class CartItemService:
         
 
     @staticmethod
-    def get_all_items_for_specific_user(user:dict):
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )        
-
+    def get_all_items_for_specific_user(user:dict):      
         the_items = CartItemsDTO.get_all_with_cartitems(
-            user_id=user["id"]
+            user_id=user.id
         )
 
 
@@ -65,16 +43,8 @@ class CartItemService:
 
 
     @staticmethod
-    def delete_product_from_cartitem(product_id:int, user:dict):
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-        
-        id_deleted_of_product = CartItemsDTO.delete_from_cart_by_id(prod_id=product_id, user_id=user["id"])
+    def delete_product_from_cartitem(product_id:int, user:dict):  
+        id_deleted_of_product = CartItemsDTO.delete_from_cart_by_id(prod_id=product_id, user_id=user.id)
 
         if not id_deleted_of_product:
             raise HTTPException(

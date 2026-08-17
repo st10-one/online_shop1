@@ -38,10 +38,6 @@ class OrderDTO:
                     two_query = select(CreateProductOrm).where(CreateProductOrm.id == item.product_id)
                     get_product = s.execute(two_query).scalar_one_or_none()
 
-                    if not get_product:
-                        print('продукту нема')
-                        return None
-
                     detail = DetailOrderOrm(
                         order_id = new_order.id,
                         product_id = item.product_id,
@@ -54,13 +50,11 @@ class OrderDTO:
 
                     s.execute(delete(CartItemsOrm).where(CartItemsOrm.user_id == user_id).returning(CartItemsOrm.id))
 
-                    s.commit()
-                    s.refresh(new_order)
-                    s.refresh(detail)
+                s.commit()
+                s.refresh(new_order)
+                s.refresh(detail)
 
-                    return detail
-                else:
-                    return None
+                return detail
         except SQLAlchemyError as e:
             raise e
 

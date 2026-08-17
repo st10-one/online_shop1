@@ -131,14 +131,6 @@ class AuthService:
 
     @staticmethod
     def update_access_token(user_id:int, response:Response):
-        active_user = get_active_user(user_id=user_id)
-        
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-
         if user_id is None:
             raise HTTPException(
                 status_code=404,

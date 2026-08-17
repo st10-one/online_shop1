@@ -18,23 +18,7 @@ class ProductService:
     def __init__(self, storage:Storage):
         self.storage = storage
 
-    def add_product(self, prod:CreateProduct, photo:ProductImage, user:dict):
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-
-        is_admin = check_admin(user_data=user)
-
-        if not is_admin:
-            raise HTTPException(
-                status_code=403,
-                detail="you don`t have an access"
-            )
-
+    def add_product(self, prod:CreateProduct, photo:ProductImage):
         filename = photo.filename
         file_content = photo.file.read(1024)
         file_len = len(file_content)
@@ -87,24 +71,7 @@ class ProductService:
     
 
     @staticmethod
-    def update_product(product_id:int, new_data:CreateProduct, user:dict):
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-
-        is_admin = check_admin(user_data=user)
-
-        if not is_admin:
-            raise HTTPException(
-                status_code=403,
-                detail="you don`t have an access"
-            )
-
-
+    def update_product(product_id:int, new_data:CreateProduct):
         id_product_edited = ProductRepo.update_product_data_by_id(
             prod_id=product_id,
             data=new_data
@@ -120,26 +87,15 @@ class ProductService:
             "edited_id": id_product_edited
         }
 
-    def delete_product(self, prod_id:int, user:dict):
-        active_user = get_active_user(user_id=user["id"])
-
-        if not active_user:
-            raise HTTPException(
-                status_code=403,
-                detail="User is not active"
-            )
-
-        is_admin = check_admin(user_data=user)
-
-        if not is_admin:
-            raise HTTPException(
-                status_code=403,
-                detail="you don`t have an access"
-            )
-
+    def delete_product(self, prod_id:int):
         url = ProductRepo.delete_product_by_id(
             prod_id=prod_id,
         )
+
+        if not url:
+            raise HTTPException(
+                status_code=404
+            )
 
         self.storage.delete(url=url)
 

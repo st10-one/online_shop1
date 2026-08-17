@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from sqlalchemy import select, update
+from fastapi import Depends
 from sqlalchemy.exc import SQLAlchemyError
 from products.schemas import CreateProduct
 from db import session
@@ -26,6 +27,7 @@ def get_product_data(
         description=description,
     )
 
+
 def change_user_active(is_active:bool, user_id:int) -> bool:
     if not isinstance(is_active, bool):
         return "Incorect of the type"
@@ -43,10 +45,6 @@ def change_user_active(is_active:bool, user_id:int) -> bool:
         raise e
 
 
-def check_admin(user_data:dict) -> Exception | bool:
-    if user_data["role"] != "ADMIN":
-        return False
-    return True
 
 def get_current_user(request:Request) -> dict | None:
     token = request.cookies.get(
@@ -89,19 +87,34 @@ def get_current_user(request:Request) -> dict | None:
         )
 
 
-
-def get_active_user(user_id:int) -> bool | None:
-    active_query = select(CreateUserOrm).where(CreateUserOrm.id == user_id) # SELECT users.id FROM users WHERE id = user_id
+def get_active_user(user:dict = Depends(get_current_user)) -> dict | None:
+    active_query = select(CreateUserOrm).where(CreateUserOrm.id == user["id"]) # SELECT users.id FROM users WHERE id = user_id
 
     with session() as s:
         user = s.execute(active_query).scalar_one_or_none()
 
     if user is None:
-        return None
+        raise HTTPException(
+            status_code=404,
+            detail="not found"
+        )
 
     if not user.is_active:
-        return None
-    return True 
+        raise HTTPException(
+            status_code=403,
+            detail="User is not active"
+        )
+    
+    return user
 
+
+def check_admin(user_data:dict = Depends(get_active_user)) -> Exception | bool:
+    if user_data.role != "ADMIN":
+        raise HTTPException(
+            status_code=403,
+            detail="You don`t have an access"
+        )
+    
+    return user_data
 
 ProductImage = Annotated[UploadFile, File()]
